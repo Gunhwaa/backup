@@ -40,20 +40,27 @@ model = dict(
         bbox_loss=dict(type='RotatedIoU3DLoss', mode='diou', reduction='none')),
     voxel_size=voxel_size,
     train_cfg=dict(),
-    test_cfg=dict(nms_pre=1000, iou_thr=.5, score_thr=.01))
+    test_cfg=dict(nms_pre=1000, iou_thr=.5, score_thr=.3))
+    # score_thr=.01
 
 optimizer = dict(type='AdamW', lr=.001, weight_decay=.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=10, norm_type=2))
 lr_config = dict(policy='step', warmup=None, step=[8, 11])
+# runner = dict(type='EpochBasedRunner', max_epochs=12)
 runner = dict(type='EpochBasedRunner', max_epochs=12)
 custom_hooks = [dict(type='EmptyCacheHook', after_iter=True)]
 
-checkpoint_config = dict(interval=1, max_keep_ckpts=1)
+checkpoint_config = dict(interval=1, max_keep_ckpts=2)
 log_config = dict(
     interval=50,
     hooks=[
         dict(type='TextLoggerHook'),
-        # dict(type='TensorboardLoggerHook')
+        dict(type='TensorboardLoggerHook')
+        # dict(type='MMDetWandbHook',
+        #      init_kwargs={'project': 'tr3d-ff'},
+        #      interval=4,
+        #      log_checkpoint=True,
+        #      log_checkpoint_metadata=True)
 ])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'

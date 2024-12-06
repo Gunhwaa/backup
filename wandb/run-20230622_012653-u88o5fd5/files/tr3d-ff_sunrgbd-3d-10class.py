@@ -1,0 +1,1 @@
+/home/dgkim/workspace/tr3d/work_dirs/tr3d-ff/img_fpn_f/tr3d-ff_sunrgbd-3d-10class.py

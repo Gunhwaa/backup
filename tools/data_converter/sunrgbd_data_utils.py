@@ -24,6 +24,7 @@ def random_sampling(points, num_points, replace=None, return_choices=False):
 
     if replace is None:
         replace = (points.shape[0] < num_points)
+
     choices = np.random.choice(points.shape[0], num_points, replace=replace)
     if return_choices:
         return points[choices], choices

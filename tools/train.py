@@ -6,6 +6,9 @@ import os
 import time
 import warnings
 from os import path as osp
+#############################################
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import mmcv
 import torch
@@ -21,6 +24,7 @@ from mmdet3d.models import build_model
 from mmdet3d.utils import collect_env, get_root_logger
 from mmdet.apis import set_random_seed
 from mmseg import __version__ as mmseg_version
+
 
 try:
     # If mmdet version > 2.20.0, setup_multi_processes would be imported and
@@ -212,6 +216,10 @@ def main():
     logger.info(f'Set random seed to {seed}, '
                 f'deterministic: {args.deterministic}')
     set_random_seed(seed, deterministic=args.deterministic)
+    # seed 고정 추가부분
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
     cfg.seed = seed
     meta['seed'] = seed
     meta['exp_name'] = osp.basename(args.config)
@@ -223,6 +231,7 @@ def main():
     model.init_weights()
 
     logger.info(f'Model:\n{model}')
+    
     datasets = [build_dataset(cfg.data.train)]
     if len(cfg.workflow) == 2:
         val_dataset = copy.deepcopy(cfg.data.val)
@@ -249,6 +258,7 @@ def main():
             if hasattr(datasets[0], 'PALETTE') else None)
     # add an attribute for visualization convenience
     model.CLASSES = datasets[0].CLASSES
+    
     train_model(
         model,
         datasets,

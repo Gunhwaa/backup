@@ -21,7 +21,8 @@ model = dict(
             label2level=[1, 1, 1, 0, 0, 1, 0, 0, 1, 0]),
         bbox_loss=dict(type='RotatedIoU3DLoss', mode='diou', reduction='none')),
     train_cfg=dict(),
-    test_cfg=dict(nms_pre=1000, iou_thr=.5, score_thr=.01))
+    # test_cfg=dict(nms_pre=1000, iou_thr=.5, score_thr=.01))
+    test_cfg=dict(nms_pre=1000, iou_thr=.5, score_thr=.3))
 
 optimizer = dict(type='AdamW', lr=.001, weight_decay=.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=10, norm_type=2))
@@ -34,7 +35,7 @@ log_config = dict(
     interval=50,
     hooks=[
         dict(type='TextLoggerHook'),
-        # dict(type='TensorboardLoggerHook')
+        dict(type='TensorboardLoggerHook')
 ])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
